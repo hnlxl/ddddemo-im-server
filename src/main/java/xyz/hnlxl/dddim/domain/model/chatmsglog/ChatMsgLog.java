@@ -69,18 +69,14 @@ public class ChatMsgLog extends AbstractAggregateRoot<ChatMsgLog> {
   /** The receiver. */
   ChatParticipant receiver;
 
-  /** The time when it is receive on. */
-  LocalDateTime receiveOn;
-
   /** Constructor on all required fields. */
   public ChatMsgLog(ChatId chatId, LocalDateTime sendOn, String content, ChatParticipant sender,
-      ChatParticipant receiver, LocalDateTime receiveOn) {
+      ChatParticipant receiver) {
     super();
     this.chatId = chatId;
     this.sendOn = sendOn;
     this.content = content;
     this.sender = sender;
     this.receiver = receiver;
-    this.receiveOn = receiveOn;
   }
 }

@@ -28,10 +28,9 @@ class ChatMsgLogTest {
     final ChatParticipant dummyReceiver =
         new ChatParticipant(new UserId(UUID.randomUUID()), "Frank");
     final String dummyContent = "Oliver call Frank";
-    final LocalDateTime dummyReceiveOn = LocalDateTime.now().minusSeconds(1L);
 
     ChatMsgLog chatMsgLog = new ChatMsgLog(dummyChatId, dummySendon, dummyContent, dummySender,
-        dummyReceiver, dummyReceiveOn);
+        dummyReceiver);
     chatMsgLogRepo.save(chatMsgLog);
 
     assertNotNull(chatMsgLog.getChatMessageId());
@@ -41,7 +40,6 @@ class ChatMsgLogTest {
     assertEquals(dummyContent, chatMsgLog.getContent());
     assertEquals(dummySender, chatMsgLog.getSender());
     assertEquals(dummyReceiver, chatMsgLog.getReceiver());
-    assertEquals(dummyReceiveOn, chatMsgLog.getReceiveOn());
   }
 
 }

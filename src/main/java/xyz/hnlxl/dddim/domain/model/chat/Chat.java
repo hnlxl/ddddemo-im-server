@@ -1,19 +1,13 @@
 package xyz.hnlxl.dddim.domain.model.chat;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -64,36 +58,37 @@ public class Chat extends AbstractAggregateRoot<Chat> {
   /** Participant B. */
   ChatParticipant beta;
 
-  /** Online state of both participants. */
-  ChatOnlineState onlineState = ChatOnlineState.NONE;
-
-  /** Cumulative minutes when both participants are both online. */
-  BigDecimal cumulativeBothOnMins = BigDecimal.ZERO;
-
-  /** Cumulative count when both participants are both online. */
-  Integer cumulativeBothOnCount = 0;
-
-  /** The messages waiting to be received by alpha or beta. */
-  @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-  @JoinColumn(name = "chat_id")
-  @OrderBy("sendOn ASC")
-  List<ChatMsgToBeReceived> unreceivedMsgs = new ArrayList<>();
+  /** Cumulative number of chat messages. */
+  Integer cumulativeMsgCount = 0;
 
   /**
    * Start a new chat.
    * 
-   * @param chatId the identification
    * @param initiator the initiator of this chat, who will be alpha
    * @param target the target of first message, who will be beta
    * @param firstMsg the first message
    * @return a new chat
    */
-  public static Chat startOne(ChatId chatId, ChatParticipant initiator, ChatParticipant target,
-      String firstMsg) {
-
+  public static Chat startOne(ChatParticipant initiator, ChatParticipant target, String firstMsg) {
+    ChatId chatId = new ChatId(UUID.randomUUID());
     Chat chat = new Chat().setChatId(chatId).setAlpha(initiator).setBeta(target);
-    chat.getUnreceivedMsgs()
-        .add(new ChatMsgToBeReceived(LocalDateTime.now(), firstMsg, initiator, target));
+    chat.commonSend(initiator, firstMsg);
     return chat;
+  }
+
+  /**
+   * Send message by any participant of this chat.
+   * 
+   * <p>Note: Message sending is always asynchronous throughout the background. Instant doesn't mean
+   * synchronous
+   */
+  public void send(ChatParticipant sender, String msg) {
+    commonSend(sender, msg);
+  }
+
+  private void commonSend(ChatParticipant sender, String msg) {
+    ChatParticipant receiver = sender.equals(getAlpha()) ? getBeta() : getAlpha();
+    cumulativeMsgCount++;
+    registerEvent(new ChatMsgSent(getChatId(), LocalDateTime.now(), msg, sender, receiver));
   }
 }
