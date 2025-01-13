@@ -8,6 +8,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Order;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.event.TransactionalEventListener;
 import xyz.hnlxl.dddim.domain.model.ChatId;
@@ -30,6 +31,7 @@ public class ChatMsgLogService {
 
   /** Javadoc omitted, see it's Annotation. */
   @TransactionalEventListener
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
   @Async
   public void listenChatMsgSent(ChatMsgSent event) {
     chatMsgLogRepo.save(

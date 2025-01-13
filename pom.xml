@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.6.2</version>
+		<version>3.4.1</version>
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>xyz.hnlxl</groupId>
@@ -15,7 +15,7 @@
 	<name>ddddemo-im-server</name>
 	<description>An instant messaging system's server side that demonstrates Java domain-driven development. 一个演示Java 领域驱动开发的即时通信系统的服务器端。 </description>
 	<properties>
-		<java.version>1.8</java.version>
+		<java.version>21</java.version>
 
 		<cao.version>0.1-SNAPSHOT</cao.version>
 	</properties>
@@ -48,7 +48,7 @@
 			<artifactId>commons-lang3</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.hibernate</groupId>
+			<groupId>org.hibernate.orm</groupId>
 			<artifactId>hibernate-jpamodelgen</artifactId>
 		</dependency>
 
